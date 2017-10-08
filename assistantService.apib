@@ -1,0 +1,126 @@
+FORMAT: 1A
+HOST: https://assistant-service-integration.wbx2.com/
+
+# Assistant Service
+
+### Dial [POST /call/actionDialOnDevice]
+
+Tells the target device to initiate a call in a place indicated by the auth token. Typically a place only contains one device and
+that device will make the call.
+A userId is required to own the call and that user is passed as the Cisco-On-Behalf-Of header and that user must be 
+an occupant of the place (which usualy means that it is ulrasonically paired with a device in that place).
+
++ Request (application/json)
+    + Attributes
+        + destination: mike@acme.webex.com (required)
+
+    + Headers
+    
+            Authorization: Bearer eyJhbGciOinRpZmllclwiOiBLCJleHBpcnlfNjVmZGYtOTY0faWQiOiI3NjQzZmM3MC05MTI2L
+            Cisco-On-Behalf-Of: Y2lzY29zcGFyazovL3VzL1BFT1BMRS8zYmZhZTk4ZS1lM2NkLTRiMzMtOTNhMy1jYjNkZDIzYjBlYjU=
+
+- Response 202 (application/json)
+    - Attributes
+        - callId: Y2lzY29zcGFyazovL3VzL0NBTExTLzU0MUFFMzBFLUUyQzUtNERENi04NTM4LTgzOTRDODYzM0I3MQo (required)
+        - status: queued (required)
+
+### Leave Call [POST /call/actionLeaveOnDevice]
+
+Tells the target device to leave an ongoing call. It will use the first active call on the device, so no call id
+is passed in.
+
+- Request (application/json)
+    + Headers
+    
+            Authorization: Bearer eyJhbGciOinRpZmllclwiOiBLCJleHBpcnlfNjVmZGYtOTY0faWQiOiI3NjQzZmM3MC05MTI2L
+
+- Response 202 (application/json)
+    - Attributes
+        - status: queued (required)
+        
+### Validate Token [GET /places/lookupToken]
+
+Checks if a token is a machine account for a lyra space and if it is then return the account ID. The token used is the one
+in the Authorization header.
+Note that the returend ID is in base64 form. If the id shown in the example (Y2lzY29zcGFyazovL3VzL0RFVklDRS8zMGE4ODUwMS1lM2JjLTQzNDEtYjA5Ni1mNDZkYzkzMzQzNTM= ) was 
+decoded from base64 it would look like this: ciscospark://us/PLACE/30a88501-e3bc-4341-b096-f46dc9334353.
+
+The APIs provided by hydra (external) always use the base64 form. The APIs used internally by Spark services use the uuid for ( e.g. 30a88501-e3bc-4341-b096-f46dc9334353).
+All of the APIs provided by assistant service for the MindMeld gateway/model/dialog manager will use the base64 format.
+
++ Request
+    + Headers
+    
+            Authorization: Bearer eyJhbGciOinRpZmllclwiOiBLCJleHBpcnlfNjVmZGYtOTY0faWQiOiI3NjQzZmM3MC05MTI2L
+
+- Response 200 (application/json)
+    - Attributes
+        - placeId: Y2lzY29zcGFyazovL3VzL0RFVklDRS8zMGE4ODUwMS1lM2JjLTQzNDEtYjA5Ni1mNDZkYzkzMzQzNTM= (required)
+        
+### Get Occupants [GET /places/lookupOccupants]
+
+Returns a JSON array of users who are present in the lyra space. This means the list of people who are ultrasonically paired with the device using the lyra token
+passed in the Authorization header. Each use in the array is returnd as the description of that use as provided by
+the hydra /people endpoint
+
++ Request
+    + Headers
+
+            Authorization: Bearer eyJhbGciOinRpZmllclwiOiBLCJleHBpcnlfNjVmZGYtOTY0faWQiOiI3NjQzZmM3MC05MTI2L
+
+- Response 200 (application/json)
+    - Attributes
+        - occupants (array, fixed)
+            - (object)
+                - id: Y2lzY29zcGFyazovL3VzL1BFT1BMRS8zYmZhZTk4ZS1lM2NkLTRiMzMtOTNhMy1jYjNkZDIzYjBlYjQ
+                - emails (array[string], fixed)
+                    - niamurph@cisco.com
+                - destination: `https://locus-a.wbx2.com/locus/api/v1/loci/31953377-85b5-4a59-94cd-d280e1ac25c5` - SIP or Loucs URL to be called when the meeting starts
+                - displayName: Niall Murphy
+                - nickName: Niall
+                - firstName: Niall
+                - lastName: Murphy
+                - avatar: https://1efa7a94ed216783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~7ce2c4dcadc1b6fcb0ca0f8a22fffa88~yIiMb_kWXVqw==~1600
+                - orgId: Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi8xZWI2NWZkZi05NjQzLTQxN2YtOTk3NC1hZDcyY2FlMGUxMG
+                - created: 2012-06-15T20:31:32.822Z
+                - lastActivity: 2017-09-01T09:21:10.881Z
+                - status: active
+                - type: person
+           
+### Read users calendar [GET /calendar/lookupEvents?from=TIMESTAMP&to=TIMESTAMP]
+
+This endpoint can be used for establishing which meeting is the user asking to join.
+It works both for the place machine account as well as on-behalf-of a paired user
+
++ Request
+    + Headers
+
+            Authorization: Bearer eyJhbGciOinRpZmllclwiOiBLCJleHBpcnlfNjVmZGYtOTY0faWQiOiI3NjQzZmM3MC05MTI2L
+            Cisco-On-Behalf-Of: Y2lzY29zcGFyazovL3VzL1BFT1BMRS8zYmZhZTk4ZS1lM2NkLTRiMzMtOTNhMy1jYjNkZDIzYjBlYjU=
+
+- Response 200 (application/json)
+    - Attributes
+        - events (array, fixed)
+            - (object)
+                - start: `2017-08-11T16:30:00.000Z` - Event's starting time. ISO8601 (string)
+                - durationMinutes: 60 - Duration of th event expressed in minutes (number)
+                - destination: `https://locus-a.wbx2.com/locus/api/v1/loci/31953377-85b5-4a59-94cd-d280e1ac25c5` - SIP or Loucs URL to be called when the meeting starts
+
+### Is Room/Place booked [GET /calendar/lookupPlaceAvailability]
+
+This endpoint can be used check if a place is booked. It can return the numer of minutes the booking lasts, or when available, it can return the number of minutes
+until the next booking.
+It only works for place accounts.
+
++ Request
+    + Headers
+    
+            Authorization: Bearer eyJhbGciOinRpZmllclwiOiBLCJleHBpcnlfNjVmZGYtOTY0faWQiOiI3NjQzZmM3MC05MTI2L
+
+- Response 200 (application/json)
+    - Attributes
+        - state: `available` - Either 'available' or 'booked' (required)
+        - nextBookingInMins: 45 - Time in minutes until the start of the next booking. This field may be present if state is 'available' (number)
+        - duration: 15 - Time in minutes until the end of the current booking. This field will be present if state is 'booked' (number)
+
+        
