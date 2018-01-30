@@ -1,0 +1,30 @@
+FORMAT: 1A
+HOST: http://myserver.com/
+
+# Message Actions Webhook
+
+## Webhook Consumer [/ingress]
+
+### Webhook Consumer [POST]
+
++ Request (application/json)
+
+    - Attributes
+        - name : Message Button Selected Actions
+        - resource: message.actions
+        - event: created
+        - filter: `type=buttonSelected`
+        - status: active
+        - actorId: Y2lzY29zcGFyazovL3VzL1BFT1BMRS8wOWZiNDNjYy1hMDA4LTQyMWYtYmVlOS0wOWVmOWMwZGQ2MWU
+        - appId: Y2lzY29zcGFyazovL3VzL0FQUExJQ0FUSU9OL0MyNzljYjMwYzAyOTE4MGJiNGJkYWViYjA2MWI3OTY1Y2RhMzliNjAyOTdjODUwM2YyNjZhYmY2NmM5OTllYzFm
+        - createdBy: Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU
+        - data
+            - id: Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU
+            - type: `buttonSelected`
+            - personId: Y2lzY29zcGFyazovL3VzL0FQUExJQ0FUSU9OL0MyNzljYjMwYzAyOTE4MGJiNGJkYWViYjA2MWI3OTY1Y2RhMzliNjAyOTdjODUwM2YyNjZhYmY2NmM5OTllYzFm
+            - messageId
+            - buttonGroupContext
+            - buttonValue
+            - created
+        
++ Response 201 (application/json)
