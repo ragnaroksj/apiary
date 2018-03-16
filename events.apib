@@ -1,0 +1,101 @@
+FORMAT: 1A
+HOST: https://api.ciscospark.com/v1/
+
+# Events
+
+Events are generated when actions take place within Cisco Spark, such as when someone creates or deletes a message. Use the Events API to retrieve events related to your account. Compliance Officers may retrieve events for all users within an organization. See the [Compliance Guide](https://developer.ciscospark.com/docs/api/guides/compliance.html) for more information.
+
+## Events Collection [/events]
+
+### List Events [GET /events{?resource,type,actorId,from,to,max}]
+
+List events in your organization. Several query parameters are available to filter the response.
+
+Long result sets will be split into [pages](https://developer.ciscospark.com/pagination.html).
+
+- Request
+    - Headers
+
+            Authorization: Bearer YOUR_ACCESS_TOKEN
+
+- Parameters
+    - resource: `messages` (string, optional)
+        Limit results to a specific resource type.
+        - Members
+            - `messages`
+            - `memberships`
+    - type: `created` (string, optional)
+        Limit results to a specific event type.
+        - Members
+            - `created`
+            - `updated`
+            - `deleted`
+    - actorId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS80MDNlZmUwNy02Yzc3LTQyY2UtOWI4NC1lZjhjYzY1ZDA4NDI` (string, optional)
+        Limit results to events performed by this person, by ID.
+    - from (date, optional)
+        Limit results to events which occurred after a date and time, in ISO8601 format.
+
+        Format: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`
+    - to (date, optional)
+        Limit results to events which occurred before a date and time, in ISO8601 format.
+
+        Format: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`
+    - max: `100` (number, optional)
+        Limit the maximum number of events in the response.
+
+- Response 200 (application/json)
+    - Attributes (Event Collection Response)
+
+    - Headers
+
+            Link: <https://api.ciscospark.com/v1/events?max=10&before&after=Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU>; rel="next"
+
+### Get Event Details [GET /events/{eventId}]
+
+Shows details for an event, by event ID.
+
+Specify the event ID in the `eventId` parameter in the URI.
+
+- Request
+    - Headers
+
+            Authorization: Bearer YOUR_ACCESS_TOKEN
+
+- Parameters
+    - eventId (required, string)
+        The unique identifier for the event.
+
+- Response 200 (application/json)
+    - Attributes (Event)
+
+# Data Structures
+
+## Event
+
+- id: `Y2lzY29zcGFyazovL3VzL0VWRU5UL2JiY2ViMWFkLTQzZjEtM2I1OC05MTQ3LWYxNGJiMGM0ZDE1NAo` (string, required) - The unique ID for the event.
+- resource: `messages` (Event Resource Enum, required) - The type of resource in the event.
+- type: `created` (Event Type Enum, required) - Which action took place in the event.
+- appId: `null` (string) - The ID of the application for the event.
+- actorId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - The ID of the person who performed the action.
+- orgId: `OTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string, required) - The ID of the organization for the event.
+- created: `2016-05-16T21:34:59.324Z` (string, required) - The date and time of the event.
+- data (object, required) - Event data representation
+    - id: `Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk` (string)
+    - roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string)
+    - roomType: `group` (string)
+    - text: `PROJECT UPDATE - A new project plan has been published on Box: http://box.com/s/lf5vj. The PM for this project is Mike C. and the Engineering Manager is Jane W.` (string)
+    - personId:`Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string)
+    - personEmail: `matt@example.com` (string)
+    - created: `2015-10-18T14:26:16+00:00` (string)
+
+## Event Collection Response (object)
+- items (array[Event])
+
+## Event Resource Enum (enum)
+- messages (string) - State changed on the messages resource
+- memberships (string) - State changed on the memberships resource
+
+## Event Type Enum (enum)
+- created (string) - The resource has been created
+- updated (string) - A property on the resource has been updated
+- deleted (string) - The resource has been deleted
