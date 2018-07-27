@@ -1,32 +1,32 @@
 FORMAT: 1A
 HOST: https://api.ciscospark.com/v1/
 
-# People spark
+# People
 
-People are registered users of the Spark application. Searching and viewing People requires an auth token with a scope of
-`spark:people_read`. Viewing the list of all People in your Organization requires an administrator auth token with `spark-admin:people_read`
-scope. Adding, updating, and removing People requires an administrator auth token with the `spark-admin:people_write` scope.
+People are registered users of Webex Teams. Searching and viewing People requires an auth token with a scope of `spark:people_read`. Viewing the list of all People in your Organization requires an administrator auth token with `spark-admin:people_read` scope. Adding, updating, and removing People requires an administrator auth token with the `spark-admin:people_write` scope.
 
-To learn more about managing people in a room see the [Memberships API]().
+To learn more about managing people in a room see the [Memberships API](/docs/teams/api/v1/memberships). For information about how to allocate Hybrid Services licenses to people, see the [Managing Hybrid Services](/docs/teams/api/guides/managing-hybrid-services) guide.
 
 ## People Collection [/people]
 
-### List People [GET /people{?email,displayName,orgId,max}]
+### List People [GET /people{?email,displayName,id,orgId,max}]
 
-List people in your organization. For most users, either the email or a Display Name parameters are required. Admin users can omit
-these fields and list all users in their organization.
+List people in your organization. For most users, either the `email` or `displayName` parameter is required. Admin users can omit these fields and list all users in their organization.
+
+Long result sets will be split into [pages](/docs/teams/api/basics#pagination).
 
 + Request
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
 + Parameters
 
-    + email: `john.andersen@example.com` (string, optional) - List people with this email address. For non-admin requests, either this or displayName are required.
+    + email: `john.andersen@example.com` (string, optional) - List people with this email address. For non-admin requests, either this or `displayName` are required.
     + displayName: `John Andersen` (string, optional) - List people whose name starts with this string. For non-admin requests, either this or email are required.
-    + orgId: `` (string, optional) - List people in this organization. Only admin users of another organization (such as partners) may use this parameter.
+    + id: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, optional) - List people by ID. Accepts up to 85 person IDs separated by commas.
+    + orgId: `Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE` (string, optional) - List people in this organization. Only admin users of another organization (such as partners) may use this parameter.
     + max: `1000` (number, optional) - Limit the maximum number of people in the response.
         + Default: 1000
 
@@ -34,12 +34,15 @@ these fields and list all users in their organization.
 
     + Attributes (Person Collection Response)
 
+    + Headers
+
+            Link: <https://api.ciscospark.com/v1/people?displayName=Harold&max=10&before&after=Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU>; rel="next"
+
 ### Create a Person [POST /people]
 
 Create a new user account for a given organization. Only an admin can create a new user account.
 
-Currently, users may have only one email address associated with their account. The `emails` parameter is an array, which accepts
-multiple values to allow for future expansion, but currently only one email address will be used for the new user.
+Currently, users may have only one email address associated with their account. The `emails` parameter is an array, which accepts multiple values to allow for future expansion, but currently only one email address will be used for the new user.
 
 + Request (application/json)
 
@@ -47,27 +50,15 @@ multiple values to allow for future expansion, but currently only one email addr
 
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
-    + Body
-    
-            {
-                "emails": [
-                  "john.smith@example.com",
-                  "jsmith@example.com"
-                  ],
-                "displayName": "John Smith",
-                "firstName": "John",
-                "lastName": "Smith",
-                "avatar": "https://1efa7a94ed21783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~54c844c89e678e5a7b16a306bc2897b9~wx29yGtlTpilEFlYzqPKag==~1600",
-                "orgId" : "OTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh",
-                "roles" : [ 
-                  "Y2lzY29zcGFyazovL3VzL1JPT00vOGNkYzQwYzQtZjA5ZS0zY2JhLThjMjYtZGQwZTcwYWRlY2Iy",
-                  "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mMDZkNzFhNS0wODMzLTRmYTUtYTcyYS1jYzg5YjI1ZWVlMmX"
-                  ],
-                "licenses" : [
-                  "Y2lzY29zcGFyazovL3VzL1JPT00vOGNkYzQwYzQtZjA5ZS0zY2JhLThjMjYtZGQwZTcwYWRlY2Iy",
-                  "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mMDZkNzFhNS0wODMzLTRmYTUtYTcyYS1jYzg5YjI1ZWVlMmX"
-                  ]
-            }
+    + Attributes
+        + emails: `john.andersen@example.com` (array, required) - The email addresses of the person.
+        + displayName: `John Andersen` (string) - The full name of the person.
+        + firstName: `John` (string) - The first name of the person.
+        + lastName: `Andersen` (string) - The last name of the person.
+        + avatar: `https://1efa7a94ed21783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~54c844c89e678e5a7b16a306bc2897b9~wx29yGtlTpilEFlYzqPKag==~1600` (string) - The URL to the person's avatar in PNG format.
+        + orgId: `Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE` (string) - The ID of the organization to which this person belongs.
+        + roles: `Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh`, `Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi` (array) - An array of role strings representing the roles to which this person belongs.
+        + licenses: `Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh`, `Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi` (array) - An array of license strings allocated to this person.
 
 + Response 200 (application/json)
 
@@ -75,19 +66,19 @@ multiple values to allow for future expansion, but currently only one email addr
 
 ### Get Person Details [GET /people/{personId}]
 
-Shows details for a person, by ID.
+Shows details for a person, by ID. Certain fields, such as `status` or `lastActivity`, will only be displayed for people within your organization or an organization you manage.
 
 Specify the person ID in the `personId` parameter in the URI.
 
 + Request
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
 + Parameters
 
-    + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - Unique identifier for the person
+    + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - A unique identifier for the person.
 
 + Response 200 (application/json)
 
@@ -97,40 +88,29 @@ Specify the person ID in the `personId` parameter in the URI.
 
 Update details for a person, by ID.
 
-Specify the person ID in the `personId` parameter in the URI. Only an admin can update a person details. Email addresses for a person
-cannot be changed via the Spark API.
+Specify the person ID in the `personId` parameter in the URI. Only an admin can update a person details.
 
-Include all details for the person. This action expects all user details to be present in the request. A common approach is to first GET
-the person's details, make changes, then PUT both the changed and unchanged values.
+Include all details for the person. This action expects all user details to be present in the request. A common approach is to first [GET the person's details](/docs/teams/api/v1/people-peopleId-get), make changes, then PUT both the changed and unchanged values.
 
 + Parameters
 
-    + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - Unique identifier for the person
+    + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - A unique identifier for the person.
 
 + Request (application/json)
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
-    + Body
-    
-            {
-                "emails": ["john.smith@example.com"],
-                "displayName": "John Smith",
-                "firstName": "John",
-                "lastName": "Smith",
-                "avatar": "https://1efa7a94ed21783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~54c844c89e678e5a7b16a306bc2897b9~wx29yGtlTpilEFlYzqPKag==~1600",
-                "orgId" : "OTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh",
-                "roles" : [ 
-                  "Y2lzY29zcGFyazovL3VzL1JPT00vOGNkYzQwYzQtZjA5ZS0zY2JhLThjMjYtZGQwZTcwYWRlY2Iy",
-                  "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mMDZkNzFhNS0wODMzLTRmYTUtYTcyYS1jYzg5YjI1ZWVlMmX"
-                  ],
-                "licenses" : [
-                  "Y2lzY29zcGFyazovL3VzL1JPT00vOGNkYzQwYzQtZjA5ZS0zY2JhLThjMjYtZGQwZTcwYWRlY2Iy",
-                  "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mMDZkNzFhNS0wODMzLTRmYTUtYTcyYS1jYzg5YjI1ZWVlMmX"
-                  ]
-            }
+    + Attributes
+        + emails: `john.andersen@example.com` (array, required) - The email addresses of the person.
+        + displayName: `John Andersen` (string) - The full name of the person.
+        + firstName: `John` (string) - The first name of the person.
+        + lastName: `Andersen` (string) - The last name of the person.
+        + avatar: `https://1efa7a94ed21783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~54c844c89e678e5a7b16a306bc2897b9~wx29yGtlTpilEFlYzqPKag==~1600` (string) - The URL to the person's avatar in PNG format.
+        + orgId: `Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE` (string) - The ID of the organization to which this person belongs.
+        + roles: `Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh`, `Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi` (array) - An array of role strings representing the roles to which this person belongs.
+        + licenses: `Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh`, `Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi` (array) - An array of license strings allocated to this person.
 
 + Response 200 (application/json)
 
@@ -138,19 +118,19 @@ the person's details, make changes, then PUT both the changed and unchanged valu
 
 ### Delete a Person [DELETE /people/{personId}]
 
-Remove a person from the system.
+Remove a person from the system. Only an admin can remove a person.
 
-Only an admin can remove a person.
+Specify the person ID in the `personId` parameter in the URI.
 
 + Request
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
 + Parameters
 
-    + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - Unique identifier for the person
+    + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - A unique identifier for the person.
 
 + Response 204 (application/json)
 
@@ -161,46 +141,54 @@ Show the profile for the authenticated user. This is the same as GET `/people/{p
 + Request (application/json)
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
 + Response 200 (application/json)
 
     + Attributes (Person)
-    
+
 # Data Structures
 
 ## Person (object)
 
-+ id: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string) - Unique identifier of the person
-+ emails: `john.andersen@example.com` (array[string]) - Array of email addresses
-+ displayName: `John Andersen` (string) - Full name of the person
-+ firstName: `John` (string) - First name of the person
-+ lastName: `Andersen` (string) - Last name of the person
-+ avatar: `https://1efa7a94ed21783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~54c844c89e678e5a7b16a306bc2897b9~wx29yGtlTpilEFlYzqPKag==~1600` (string) - URL to the person's avatar in PNG format
-+ orgId: `OTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string) - ID of the organization to which this person belongs
-+ roles: `Y2lzY29zcGFyazovL3VzL1JPT00vOGNkYzQwYzQtZjA5ZS0zY2JhLThjMjYtZGQwZTcwYWRlY2Iy`, `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mMDZkNzFhNS0wODMzLTRmYTUtYTcyYS1jYzg5YjI1ZWVlMmX` (array) - Array of role strings representing the roles to which this person belongs
-+ licenses: `Y2lzY29zcGFyazovL3VzL1JPT00vOGNkYzQwYzQtZjA5ZS0zY2JhLThjMjYtZGQwZTcwYWRlY2Iy`, `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mMDZkNzFhNS0wODMzLTRmYTUtYTcyYS1jYzg5YjI1ZWVlMmX` (array) - Array of license strings allocated to this person
-+ created: `2015-10-18T14:26:16+00:00` (string) - Date and time the person was created
-+ timezone: `America/Denver` (string) - Time zone of the person
-+ lastActivity: `2015-10-18T14:26:16+00:00` (string) - Date and time of the person's last activity within Cisco Spark
-+ status: `active` (enum) - Current status of the person
++ id: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string) - A unique identifier for the person.
++ emails: `john.andersen@example.com` (array[string]) - The email addresses of the person.
++ displayName: `John Andersen` (string) - The full name of the person.
++ nickName: `John` (string) - The nickname of the person if configured. If no nickname is configured for the person, this field will not be present.
++ firstName: `John` (string) - The first name of the person.
++ lastName: `Andersen` (string) - The last name of the person.
++ avatar: `https://1efa7a94ed21783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~54c844c89e678e5a7b16a306bc2897b9~wx29yGtlTpilEFlYzqPKag==~1600` (string) - The URL to the person's avatar in PNG format.
++ orgId: `Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE` (string) - The ID of the organization to which this person belongs.
++ roles: `Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh`, `Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi` (array) - An array of role strings representing the roles to which this person belongs.
++ licenses: `Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh`, `Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi` (array) - An array of license strings allocated to this person.
++ created: `2015-10-18T14:26:16.000Z` (string) - The date and time the person was created.
++ timezone: `America/Denver` (string, optional) - The time zone of the person if configured. If no timezone is configured on the account, this field will not be present
++ lastActivity: `2015-10-18T14:26:16.028Z` (string) - The date and time of the person's last activity within Webex Teams.
++ status: `active` (enum) - The current status of the person.
 
     + Members
-        + active - person is actively using Cisco Spark
-        + inactive - person is _not_ actively using Cisco Spark
+        + active - person is actively using Webex Teams
+        + inactive - person is _not_ actively using Webex Teams
 
-+ invitePending: `false` (enum) - Whether or not an invite is pending for user to complete account activation
++ invitePending: `false` (enum) - Whether or not an invite is pending for user to complete account activation.
 
     + Members
         + true - invite pending
         + false - an invite is not pending for this person
 
-+ loginEnabled: `true` (enum) - Whether or not the user is allowed to use Cisco Spark
++ loginEnabled: `true` (enum) - Whether or not the user is allowed to use Webex Teams.
 
     + Members
-        + true - person _can_ log into Cisco Spark
-        + false - person _cannot_ log into Cisco Spark
+        + true - person _can_ log into Webex Teams
+        + false - person _cannot_ log into Webex Teams
+
++ type: `person` (enum) - The type of person account, such as person or bot.
+
+    + Members
+        + person - account belongs to a person
+        + bot - account is a bot user
 
 ## Person Collection Response (object)
+
 + items (array[Person])

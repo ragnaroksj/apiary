@@ -1,0 +1,125 @@
+FORMAT: 1A
+HOST: https://api.ciscospark.com/v1/
+
+# Teams
+
+Teams are groups of people with a set of rooms that are visible to all members of that team. This API is used to manage the teams themselves. Teams are created and deleted with this API. You can also update a team to change its name, for example.
+
+To manage people in a team see the [Team Memberships API](/docs/teams/api/v1/team-memberships).
+
+To manage team rooms see the [Rooms API](/docs/teams/api/v1/rooms).
+
+## Teams Collection [/teams]
+
+### List Teams [GET /teams{?max}]
+
+Lists teams to which the authenticated user belongs.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + max: `1000` (number, optional) - Limit the maximum number of teams in the response.
+        + Default: 1000
+
++ Response 200 (application/json)
+
+    + Attributes (Team Collection Response)
+
+    + Headers
+
+            Link: <https://api.ciscospark.com/v1/teams?max=10&before&after=Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU>; rel="next"
+
+### Create a Team [POST /teams]
+
+Creates a team. The authenticated user is automatically added as a member of the team. See the [Team Memberships API](/docs/teams/api/v1/team-memberships) to learn how to add more people to the team.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
+    + Attributes
+        + name: `Build Squad` (string, required) - A user-friendly name for the team.
+
++ Response 200 (application/json)
+
+    + Attributes (Team)
+
+### Get Team Details [GET /teams/{teamId}]
+
+Shows details for a team, by ID.
+
+Specify the team ID in the `teamId` parameter in the URI.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + teamId: `Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string, required) - The unique identifier for the team.
+
++ Response 200 (application/json)
+
+    + Attributes (Team)
+
+### Update a Team [PUT /teams/{teamId}]
+
+Updates details for a team, by ID.
+
+Specify the team ID in the `teamId` parameter in the URI.
+
++ Parameters
+
+    + teamId: `Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string, required) - The unique identifier for the team.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
+    + Attributes
+        + name: `Build Squad` (string, required) - A user-friendly name for the team.
+
++ Response 200 (application/json)
+
+    + Attributes (Team)
+
+### Delete a Room [DELETE /teams/{teamId}]
+
+Deletes a team, by ID.
+
+Specify the team ID in the `teamId` parameter in the URI.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + teamId: `Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string, required) - The unique identifier for the team.
+
++ Response 204 (application/json)
+
+# Data Structures
+
+## Team (object)
+
++ id: `Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string) - A unique identifier for the team.
++ name: `Build Squad` (string) - A user-friendly name for the team.
++ created: `2015-10-18T14:26:16.000Z` (string) - The date and time the team was created.
+
+## Team Collection Response (object)
+
++ items (array[Team])

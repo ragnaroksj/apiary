@@ -1,0 +1,143 @@
+FORMAT: 1A
+HOST: https://api.ciscospark.com/v1/
+
+# Memberships
+
+Memberships represent a person's relationship to a room. Use this API to list members of any room that you're in or create memberships to invite someone to a room. Memberships can also be updated to make someone a moderator or deleted to remove them from the room.
+
+Just like in the Webex Teams app, you must be a member of the room in order to list its memberships or invite people.
+
+## Memberships Collection [/memberships]
+
+### List Memberships [GET /memberships{?roomId,personId,personEmail,max}]
+
+Lists all room memberships. By default, lists memberships for rooms to which the authenticated user belongs.
+
+Use query parameters to filter the response.
+
+Use `roomId` to list memberships for a room, by ID.
+
+Use either `personId` or `personEmail` to filter the results.
+
+Long result sets will be split into [pages](/docs/teams/api/basics#pagination).
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string, optional) - List memberships associated with a room, by ID.
+    + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, optional) - List memberships associated with a person, by ID.
+    + personEmail: `john.andersen@example.com` (string, optional) - List memberships associated with a person, by email address.
+    + max: `1000` (number, optional) - Limit the maximum number of memberships in the response.
+        + Default: 1000
+
++ Response 200 (application/json)
+
+    + Attributes (Membership Collection Response)
+
+    + Headers
+
+            Link: <https://api.ciscospark.com/v1/memberships?roomId=Y2lzY29zcGFyazovL3VzL1JPT00vMzljZTM0ZjAtOGM5MS0xMWU1LTlhOWEtZWYyMzk5NDE4NDg4&max=10&before&after=Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU>; rel="next"
+
+### Create a Membership [POST /memberships]
+
+Add someone to a room by Person ID or email address; optionally making them a moderator.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
+    + Attributes
+        + roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string, required) - The room ID.
+        + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string) - The person ID.
+        + personEmail: `john.andersen@example.com` (string) - The email address of the person.
+        + isModerator: `true` (boolean) - Whether or not the participant is a room moderator.
+
++ Response 200 (application/json)
+
+    + Attributes (Membership)
+
+### Get Membership Details [GET /memberships/{membershipId}]
+
+Get details for a membership by ID.
+
+Specify the membership ID in the `membershipId` URI parameter.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + membershipId: `Y2lzY29zcGFyazovL3VzL01FTUJFUlNISVAvMGQwYzkxYjYtY2U2MC00NzI1LWI2ZDAtMzQ1NWQ1ZDExZWYzOmNkZTFkZDQwLTJmMGQtMTFlNS1iYTljLTdiNjU1NmQyMjA3Yg` (string, required) - The unique identifier for the membership.
+
++ Response 200 (application/json)
+
+    + Attributes (Membership)
+
+### Update a Membership [PUT /memberships/{membershipId}]
+
+Updates properties for a membership by ID.
+
+Specify the membership ID in the `membershipId` URI parameter.
+
++ Parameters
+
+    + membershipId: `Y2lzY29zcGFyazovL3VzL01FTUJFUlNISVAvMGQwYzkxYjYtY2U2MC00NzI1LWI2ZDAtMzQ1NWQ1ZDExZWYzOmNkZTFkZDQwLTJmMGQtMTFlNS1iYTljLTdiNjU1NmQyMjA3Yg` (string, required) - The unique identifier for the membership.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
+    + Attributes
+        + isModerator: `true` (boolean, required) - Whether or not the participant is a room moderator.
+
++ Response 200 (application/json)
+
+    + Attributes (Membership)
+
+### Delete a Membership [DELETE /memberships/{membershipId}]
+
+Deletes a membership by ID.
+
+Specify the membership ID in the `membershipId` URI parameter.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + membershipId: `Y2lzY29zcGFyazovL3VzL01FTUJFUlNISVAvMGQwYzkxYjYtY2U2MC00NzI1LWI2ZDAtMzQ1NWQ1ZDExZWYzOmNkZTFkZDQwLTJmMGQtMTFlNS1iYTljLTdiNjU1NmQyMjA3Yg` (string, required) - The unique identifier for the membership.
+
++ Response 204 (application/json)
+
+# Data Structures
+
+## Membership (object)
+
++ id: `Y2lzY29zcGFyazovL3VzL01FTUJFUlNISVAvMGQwYzkxYjYtY2U2MC00NzI1LWI2ZDAtMzQ1NWQ1ZDExZWYzOmNkZTFkZDQwLTJmMGQtMTFlNS1iYTljLTdiNjU1NmQyMjA3Yg` (string) - A unique identifier for the membership.
++ roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string) - The room ID.
++ personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string) - The person ID.
++ personEmail: `john.andersen@example.com` (string) - The email address of the person.
++ personDisplayName: `John Andersen` (string) - The display name of the person.
++ personOrgId: `Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE` (string) - The organization ID of the person.
++ isModerator: `true` (boolean) - Whether or not the participant is a room moderator.
++ isMonitor: `false` (boolean) - Whether or not the participant is a monitoring bot (deprecated).
++ created: `2015-10-18T14:26:16.203Z` - The date and time when the membership was created.
+
+## Membership Collection Response (object)
+
++ items (array[Membership])

@@ -1,0 +1,163 @@
+FORMAT: 1A
+HOST: https://api.ciscospark.com/v1/
+
+# Webhooks
+
+Webhooks allow your app to be notified via HTTP when a specific event occurs in Webex Teams. For example, your app can register a webhook to be notified when a new message is posted into a specific room.
+
+Events trigger in near real-time allowing your app and backend IT systems to stay in sync with new content and room activity.
+
+Check the [Webhooks Guide](/docs/teams/api/guides/webhooks) and our blog regularly for announcements of additional webhook resources and event types.
+
+## Webhooks Collection [/webhooks]
+
+### List Webhooks [GET /webhooks{?max}]
+
+List all of your webhooks.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + max: `1000` (number, optional) - Limit the maximum number of webhooks in the response.
+        + Default: 1000
+
++ Response 200 (application/json)
+
+    + Attributes (Webhook Collection Response)
+
+    + Headers
+
+            Link: <https://api.ciscospark.com/v1/webhooks?max=10&before&after=Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU>; rel="next"
+
+### Create a Webhook [POST /webhooks]
+
+Creates a webhook.
+
+To learn more about how to create and use webhooks, see the [Webhooks Guide](/docs/teams/api/guides/webhooks).
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
+    + Attributes
+        + name: `My Awesome Webhook` (string, required) - A user-friendly name for the webhook.
+        + targetUrl: `https://example.com/mywebhook` (string, required) - The URL that receives POST requests for each event.
+        + resource: `messages` (enum, required) - The resource type for the webhook. Creating a webhook requires 'read' scope on the resource the webhook is for.
+            + Members
+                + memberships
+                + messages
+                + rooms
+        + event: `created` (enum, required) - The event type for the webhook.
+            + Members
+                + created
+                + updated
+                + deleted
+        + filter: `roomId=Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string) - The filter that defines the webhook scope.
+        + secret: `86dacc007724d8ea666f88fc77d918dad9537a15` (string) - The secret used to generate payload signature.
+
++ Response 200 (application/json)
+
+    + Attributes (Webhook)
+
+### Get Webhook Details [GET /webhooks/{webhookId}]
+
+Shows details for a webhook, by ID.
+
+Specify the webhook ID in the `webhookId` parameter in the URI.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + webhookId: `Y2lzY29zcGFyazovL3VzL1dFQkhPT0svOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string, required) - The unique identifier for the webhook.
+
++ Response 200 (application/json)
+
+    + Attributes (Webhook)
+
+### Update a Webhook [PUT /webhooks/{webhookId}]
+
+Updates a webhook, by ID.
+
+Specify the webhook ID in the `webhookId` parameter in the URI.
+
++ Parameters
+
+    + webhookId: `Y2lzY29zcGFyazovL3VzL1dFQkhPT0svOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string, required) - The unique identifier for the webhook.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
+    + Attributes
+        + name: `My Awesome Webhook` (string, required) - A user-friendly name for the webhook.
+        + targetUrl: `https://example.com/mywebhook` (string, required) - The URL that receives POST requests for each event.
+        + secret: `86dacc007724d8ea666f88fc77d918dad9537a15` (string) - The secret used to generate payload signature.
+        + status: `active` (enum) - The status of the webhook. Use `active` to reactivate a disabled webhook.
+            + Members
+                + active
+                + inactive
+
++ Response 200 (application/json)
+
+    + Attributes (Webhook)
+
+### Delete a Webhook [DELETE /webhooks/{webhookId}]
+
+Deletes a webhook, by ID.
+
+Specify the webhook ID in the `webhookId` parameter in the URI.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + webhookId: `Y2lzY29zcGFyazovL3VzL1dFQkhPT0svOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string, required) - The unique identifier for the webhook.
+
++ Response 204 (application/json)
+
+# Data Structures
+
+## Webhook (object)
+
++ id: `Y2lzY29zcGFyazovL3VzL1dFQkhPT0svOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string) - A unique identifier for the webhook.
++ name: `My Awesome Webhook` (string) - A user-friendly name for the webhook.
++ targetUrl: `https://example.com/mywebhook` (string) - The URL that receives POST requests for each event.
++ resource: `messages` (enum) - The resource type for the webhook. Creating a webhook requires 'read' scope on the resource the webhook is for.
+    + Members
+        + memberships
+        + messages
+        + rooms
++ event: `created` (enum) - The event type for the webhook.
+    + Members
+        + created
+        + updated
+        + deleted
++ filter: `roomId=Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string) - The filter that defines the webhook scope.
++ secret: `86dacc007724d8ea666f88fc77d918dad9537a15` (string) - The secret used to generate payload signature.
++ status: `active` (enum) - The status of the webhook. Use `active` to reactivate a disabled webhook.
+    + Members
+        + active
+        + inactive
++ created: `2015-10-18T14:26:16+00:00` (string) - The date and time the webhook was created.
+
+## Webhook Collection Response (object)
+
++ items (array[Webhook])

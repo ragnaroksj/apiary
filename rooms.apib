@@ -5,15 +5,15 @@ HOST: https://api.ciscospark.com/v1/
 
 Rooms are virtual meeting places where people post messages and collaborate to get work done. This API is used to manage the rooms themselves. Rooms are created and deleted with this API. You can also update a room to change its title, for example.
 
-To create a team room, specify the a `teamId` in POST payload. Note that once a room is added to a team, it cannot be moved. To learn more about managing teams, see the [Teams API](https://developer.ciscospark.com/resource-teams.html).
+To create a team room, specify the a `teamId` in the POST payload. Note that once a room is added to a team, it cannot be moved. To learn more about managing teams, see the [Teams API](/docs/teams/api/v1/teams).
 
-To manage people in a room see the [Memberships API](https://developer.ciscospark.com/resource-memberships.html).
+To manage people in a room see the [Memberships API](/docs/teams/api/v1/memberships).
 
-To post content see the [Messages API](https://developer.ciscospark.com/resource-messages.html).
+To post content see the [Messages API](/docs/teams/api/v1/messages).
 
 ## Rooms Collection [/rooms]
 
-### List Rooms [GET /rooms{?teamId,max,type,sortBy}]
+### List Rooms [GET /rooms{?teamId,type,sortBy,max}]
 
 List rooms.
 
@@ -21,28 +21,28 @@ The `title` of the room for 1-to-1 rooms will be the display name of the other p
 
 By default, lists rooms to which the authenticated user belongs.
 
-Long result sets will be split into [pages](https://developer.ciscospark.com/pagination.html).
+Long result sets will be split into [pages](/docs/teams/api/basics#pagination).
 
 + Request
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
 + Parameters
 
-    + teamId: `Y2lzY29zcGFyazovL3VzL1JPT00vNjRlNDVhZTAtYzQ2Yi0xMWU1LTlkZjktMGQ0MWUzNDIxOTcz` (string, optional) - Limit the rooms to those associated with a team, by ID.
+    + teamId: `Y2lzY29zcGFyazovL3VzL1JPT00vNjRlNDVhZTAtYzQ2Yi0xMWU1LTlkZjktMGQ0MWUzNDIxOTcz` (string, optional) - List rooms associated with a team, by ID.
+    + type: `group` (string, optional) - List rooms by type.
+        + Members
+            + direct - 1-to-1 rooms
+            + group - group rooms
+    + sortBy: `id` (string, optional) - Sort results.
+        + Members
+            + id - sort by `roomId`
+            + lastactivity - sort by most recent activity
+            + created - sort by created date
     + max: `1000` (number, optional) - Limit the maximum number of rooms in the response.
         + Default: 1000
-    + type: `direct` (string, optional) - Limit the rooms to a certain type. If not specified or values are not matched, will return all room types.
-        + Members
-            + direct
-            + group
-    + sortBy: `id` (string, optional) - Sort results by room ID (`id`), most recent activity (`lastactivity`), or most recently created (`created`).
-        + Members
-            + id
-            + lastactivity
-            + created
 
 + Response 200 (application/json)
 
@@ -54,9 +54,9 @@ Long result sets will be split into [pages](https://developer.ciscospark.com/pag
 
 ### Create a Room [POST /rooms]
 
-Creates a room. The authenticated user is automatically added as a member of the room. See the [Memberships API](https://developer.ciscospark.com/resource-memberships.html) to learn how to add more people to the room.
+Creates a room. The authenticated user is automatically added as a member of the room. See the [Memberships API](/docs/teams/api/v1/memberships) to learn how to add more people to the room.
 
-To create a 1-to-1 room, use the [Create Messages](https://developer.ciscospark.com/endpoint-messages-post.html) endpoint to send a message directly to another person by using the `toPersonId` or `toPersonEmail` parameters.
+To create a 1-to-1 room, use the [Create Messages](/docs/teams/api/v1/messages-post) endpoint to send a message directly to another person by using the `toPersonId` or `toPersonEmail` parameters.
 
 + Request (application/json)
 
@@ -83,12 +83,12 @@ Specify the room ID in the `roomId` parameter in the URI.
 + Request
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
 + Parameters
 
-    + roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string, required) - Unique identifier for the room
+    + roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string, required) - The unique identifier for the room.
 
 + Response 200 (application/json)
 
@@ -102,12 +102,12 @@ Specify the room ID in the `roomId` parameter in the URI.
 
 + Parameters
 
-    + roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string, required) - Unique identifier for the room
+    + roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string, required) - The unique identifier for the room.
 
 + Request (application/json)
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
     + Attributes
@@ -128,25 +128,30 @@ Specify the room ID in the `roomId` parameter in the URI.
 + Request
 
     + Headers
-    
+
             Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
 + Parameters
 
-    + roomId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - Unique identifier for the room
+    + roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string, required) - The unique identifier for the room.
 
 + Response 204 (application/json)
 
 # Data Structures
 
 ## Room (object)
-+ id: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string) - Unique identifier for the room
-+ title: `Project Unicorn - Sprint 0` (string) - The title of the room
-+ type: `group` (string) - The type of room
-+ isLocked: `true` (string) - Whether or not the room is locked for moderation
-+ teamId: `Y2lzY29zcGFyazovL3VzL1JPT00vNjRlNDVhZTAtYzQ2Yi0xMWU1LTlkZjktMGQ0MWUzNDIxOTcz` (string) - Team ID if the room is part of a team
-+ lastActivity: `2016-04-21T19:12:48.920Z` (string) - Date and time of the room's last activity within Cisco Spark
-+ created: `2016-04-21T19:01:55.966Z` (string) - Date and time the room was created
+
++ id: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string) - A unique identifier for the room.
++ title: `Project Unicorn - Sprint 0` (string) - A user-friendly name for the room.
++ type: `group` (enum) - The room type.
+    + Members
+        + direct - 1-to-1 room
+        + group - group room
++ isLocked: `true` (boolean) - Whether the room is moderated (locked) or not.
++ teamId: `Y2lzY29zcGFyazovL3VzL1JPT00vNjRlNDVhZTAtYzQ2Yi0xMWU1LTlkZjktMGQ0MWUzNDIxOTcz` (string) - The ID for the team with which this room is associated.
++ lastActivity: `2016-04-21T19:12:48.920Z` (string) - The date and time of the room's last activity.
++ created: `2016-04-21T19:01:55.966Z` (string) - The date and time the room was created.
 
 ## Room Collection Response (object)
+
 + items (array[Room])

@@ -1,0 +1,61 @@
+FORMAT: 1A
+HOST: https://api.ciscospark.com/v1/
+
+# Roles
+
+A persona for an authenticated user, corresponding to a set of privileges within an organization. This roles resource can be accessed only by an admin.
+
+## Roles Collection [/roles]
+
+### List Roles [GET /roles{?max}]
+
+List all roles.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+    + max: `1000` (number, optional) - Limit the maximum number of people in the response.
+        + Default: 1000
+
++ Response 200 (application/json)
+
+    + Attributes (Role Collection Response)
+
+    + Headers
+
+            Link: <https://api.ciscospark.com/v1/roles?max=10&before&after=Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh>; rel="next"
+
+### Get Role Details [GET /roles/{roleId}]
+
+Shows details for a role, by ID.
+
+Specify the role ID in the `roleId` parameter in the URI.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + roleId: `Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string, required) - The unique identifier for the role.
+
++ Response 200 (application/json)
+
+    + Attributes (Role)
+
+# Data Structures
+
+## Role (object)
+
++ id: `Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string) - A unique identifier for the role.
++ name: `Full Administrator` (string) - The name of the role.
+
+## Role Collection Response (object)
+
++ items (array[Role])

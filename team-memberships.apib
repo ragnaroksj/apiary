@@ -1,0 +1,134 @@
+FORMAT: 1A
+HOST: https://api.ciscospark.com/v1/
+
+# Team Memberships
+
+Team Memberships represent a person's relationship to a team. Use this API to list members of any team that you're in or create memberships to invite someone to a team. Team memberships can also be updated to make someone a moderator or deleted to remove them from the team.
+
+Just like in the Webex Teams app, you must be a member of the team in order to list its memberships or invite people.
+
+## Team Memberships Collection [/team/memberships]
+
+### List Team Memberships [GET /team/memberships{?teamId,max}]
+
+Lists all team memberships for a given team, specified by the `teamId` query parameter.
+
+Use query parameters to filter the response.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + teamId: `Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string, optional) - List memberships for a team, by ID.
+    + max: `1000` (number, optional) - Limit the maximum number of team memberships in the response.
+        + Default: 1000
+
++ Response 200 (application/json)
+
+    + Attributes (Team Membership Collection Response)
+
+    + Headers
+
+            Link: <https://api.ciscospark.com/v1/team/memberships?teamId=Y2lzY29zcGFyazovL3VzL1JPT00vMzljZTM0ZjAtOGM5MS0xMWU1LTlhOWEtZWYyMzk5NDE4NDg4&max=10&before&after=Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU>; rel="next"
+
+### Create a Team Membership [POST /team/memberships]
+
+Add someone to a team by Person ID or email address; optionally making them a moderator.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
+    + Attributes
+        + teamId: `Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string, required) - The team ID.
+        + personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string) - The person ID.
+        + personEmail: `john.andersen@example.com` (string) - The email address of the person.
+        + isModerator: `true` (boolean) - Whether or not the participant is a team moderator.
+
++ Response 200 (application/json)
+
+    + Attributes (Team Membership)
+
+### Get Team Membership Details [GET /team/memberships/{membershipId}]
+
+Shows details for a team membership, by ID.
+
+Specify the team membership ID in the `membershipId` URI parameter.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + membershipId: `Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string, required) - The unique identifier for the team membership.
+
++ Response 200 (application/json)
+
+    + Attributes (Team Membership)
+
+### Update a Team Membership [PUT /team/memberships/{membershipId}]
+
+Updates a team membership, by ID.
+
+Specify the team membership ID in the `membershipId` URI parameter.
+
++ Parameters
+
+    + membershipId: `Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string, required) - The unique identifier for the team membership.
+
++ Request (application/json)
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
+    + Attributes
+        + isModerator: `true` (boolean, required) - Whether or not the participant is a team moderator.
+
++ Response 200 (application/json)
+
+    + Attributes (Team Membership)
+
+### Delete a Team Membership [DELETE /team/memberships/{membershipId}]
+
+Deletes a team membership, by ID.
+
+Specify the team membership ID in the `membershipId` URI parameter.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
+
++ Parameters
+
+    + membershipId: `Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string, required) - The unique identifier for the team membership.
+
++ Response 204 (application/json)
+
+# Data Structures
+
+## Team Membership (object)
+
++ id: `Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string) - A unique identifier for the team membership.
++ teamId: `Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5` (string) - The team ID.
++ personId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string) - The person ID.
++ personEmail: `john.andersen@example.com` (string) - The email address of the person.
++ personDisplayName: `John Andersen` (string) - The display name of the person.
++ personOrgId: `Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE` (string) - The organization ID of the person.
++ isModerator: `true` (boolean) - Whether or not the participant is a team moderator.
++ created: `2015-10-18T14:26:16.203Z` - The date and time when the team membership was created.
+
+## Team Membership Collection Response (object)
+
++ items (array[Team Membership])
