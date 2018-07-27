@@ -1,101 +1,54 @@
 FORMAT: 1A
 HOST: https://api.ciscospark.com/v1/
 
-# Events
+# Organizations
 
-Events are generated when actions take place within Cisco Spark, such as when someone creates or deletes a message. Use the Events API to retrieve events related to your account. Compliance Officers may retrieve events for all users within an organization. See the [Compliance Guide](https://developer.ciscospark.com/docs/api/guides/compliance.html) for more information.
+A set of people in Webex Teams. Organizations may manage other organizations or be managed themselves. This organizations resource can be accessed only by an admin.
 
-## Events Collection [/events]
+## Organizations Collection [/organizations]
 
-### List Events [GET /events{?resource,type,actorId,from,to,max}]
+### List Organizations [GET /organizations]
 
-List events in your organization. Several query parameters are available to filter the response.
+List all organizations visible by your account. The results will not be [paginated](/docs/teams/api/basics#pagination).
 
-Long result sets will be split into [pages](https://developer.ciscospark.com/pagination.html).
++ Request
 
-- Request
-    - Headers
+    + Headers
 
-            Authorization: Bearer YOUR_ACCESS_TOKEN
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
-- Parameters
-    - resource: `messages` (string, optional)
-        Limit results to a specific resource type.
-        - Members
-            - `messages`
-            - `memberships`
-    - type: `created` (string, optional)
-        Limit results to a specific event type.
-        - Members
-            - `created`
-            - `updated`
-            - `deleted`
-    - actorId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS80MDNlZmUwNy02Yzc3LTQyY2UtOWI4NC1lZjhjYzY1ZDA4NDI` (string, optional)
-        Limit results to events performed by this person, by ID.
-    - from (date, optional)
-        Limit results to events which occurred after a date and time, in ISO8601 format.
++ Response 200 (application/json)
 
-        Format: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`
-    - to (date, optional)
-        Limit results to events which occurred before a date and time, in ISO8601 format.
+    + Attributes (Organization Collection Response)
 
-        Format: `yyyy-MM-dd'T'HH:mm:ss.SSSZ`
-    - max: `100` (number, optional)
-        Limit the maximum number of events in the response.
+### Get Organization Details [GET /organizations/{orgId}]
 
-- Response 200 (application/json)
-    - Attributes (Event Collection Response)
+Shows details for an organization, by ID.
 
-    - Headers
+Specify the org ID in the `orgId` parameter in the URI.
 
-            Link: <https://api.ciscospark.com/v1/events?max=10&before&after=Y2lzY29zcGFyazovL3VzL1BFT1BMRS83MTZlOWQxYy1jYTQ0LTRmZWQtOGZjYS05ZGY0YjRmNDE3ZjU>; rel="next"
++ Request
 
-### Get Event Details [GET /events/{eventId}]
+    + Headers
 
-Shows details for an event, by event ID.
+            Authorization: Bearer YOUR_AUTHORIZATION_TOKEN
 
-Specify the event ID in the `eventId` parameter in the URI.
++ Parameters
 
-- Request
-    - Headers
+    + orgId: `Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE` (string, required) - The unique identifier for the organization.
 
-            Authorization: Bearer YOUR_ACCESS_TOKEN
++ Response 200 (application/json)
 
-- Parameters
-    - eventId (required, string)
-        The unique identifier for the event.
-
-- Response 200 (application/json)
-    - Attributes (Event)
+    + Attributes (Organization)
 
 # Data Structures
 
-## Event
+## Organization (object)
 
-- id: `Y2lzY29zcGFyazovL3VzL0VWRU5UL2JiY2ViMWFkLTQzZjEtM2I1OC05MTQ3LWYxNGJiMGM0ZDE1NAo` (string, required) - The unique ID for the event.
-- resource: `messages` (Event Resource Enum, required) - The type of resource in the event.
-- type: `created` (Event Type Enum, required) - Which action took place in the event.
-- appId: `null` (string) - The ID of the application for the event.
-- actorId: `Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string, required) - The ID of the person who performed the action.
-- orgId: `OTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh` (string, required) - The ID of the organization for the event.
-- created: `2016-05-16T21:34:59.324Z` (string, required) - The date and time of the event.
-- data (object, required) - Event data representation
-    - id: `Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk` (string)
-    - roomId: `Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0` (string)
-    - roomType: `group` (string)
-    - text: `PROJECT UPDATE - A new project plan has been published on Box: http://box.com/s/lf5vj. The PM for this project is Mike C. and the Engineering Manager is Jane W.` (string)
-    - personId:`Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY` (string)
-    - personEmail: `matt@example.com` (string)
-    - created: `2015-10-18T14:26:16+00:00` (string)
++ id: `Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE` (string) - A unique identifier for the organization.
++ displayName: `Acme, Inc.` (string) - Full name of the organization.
++ created: `2015-10-18T14:26:16+00:00` (string) - The date and time the organization was created.
 
-## Event Collection Response (object)
-- items (array[Event])
+## Organization Collection Response (object)
 
-## Event Resource Enum (enum)
-- messages (string) - State changed on the messages resource
-- memberships (string) - State changed on the memberships resource
-
-## Event Type Enum (enum)
-- created (string) - The resource has been created
-- updated (string) - A property on the resource has been updated
-- deleted (string) - The resource has been deleted
++ items (array[Organization])
